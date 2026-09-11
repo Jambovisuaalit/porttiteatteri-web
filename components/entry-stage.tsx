@@ -1,6 +1,7 @@
 "use client";
 
 import { CSSProperties, useEffect, useRef, useState } from "react";
+import { LogoGlyph, StackedMasterLogo } from "@/components/master-logo";
 
 const WORD = "PORTTITEATTERI".split("");
 const PORTTI = "PORTTI".split("");
@@ -18,7 +19,7 @@ export function SiteHeader() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      setVisible(window.scrollY > window.innerHeight * 1.18);
+      setVisible(window.scrollY > window.innerHeight * 1.08);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -36,8 +37,7 @@ export function SiteHeader() {
   return (
     <header className="site-header" data-visible={visible ? "true" : "false"}>
       <a className="header-mark" href="#top" aria-label="Porttiteatteri — alkuun">
-        <span>PORTTI</span>
-        <span>TEATTERI</span>
+        <StackedMasterLogo />
       </a>
       <nav className="header-nav" aria-label="Päänavigaatio">
         <a href="#ohjelmisto">Ohjelmisto</a>
@@ -66,14 +66,19 @@ export function EntryStage() {
       const rect = stage.getBoundingClientRect();
       const scrollable = Math.max(1, stage.offsetHeight - window.innerHeight);
       const progress = clamp(-rect.top / scrollable);
-      const opening = clamp(progress / 0.46);
-      const surface = clamp((progress - 0.12) / 0.3);
-      const reveal = clamp((progress - 0.3) / 0.24);
+
+      const opening = clamp((progress - 0.18) / 0.24);
+      const surface = clamp((progress - 0.38) / 0.2);
+      const copyReveal = clamp((progress - 0.5) / 0.22);
+      const ctaReveal = clamp((progress - 0.72) / 0.16);
 
       frame.style.setProperty("--progress", progress.toFixed(4));
       frame.style.setProperty("--opening", opening.toFixed(4));
       frame.style.setProperty("--surface", surface.toFixed(4));
-      frame.style.setProperty("--reveal", reveal.toFixed(4));
+      frame.style.setProperty("--copy-reveal", copyReveal.toFixed(4));
+      frame.style.setProperty("--cta-reveal", ctaReveal.toFixed(4));
+      frame.style.setProperty("--copy-y", `${((1 - copyReveal) * 12).toFixed(3)}vh`);
+      frame.style.setProperty("--cta-y", `${((1 - ctaReveal) * 16).toFixed(2)}px`);
     };
 
     const schedule = () => {
@@ -82,10 +87,13 @@ export function EntryStage() {
     };
 
     if (reduced.matches) {
-      frame.style.setProperty("--progress", "0.7");
+      frame.style.setProperty("--progress", "0.78");
       frame.style.setProperty("--opening", "1");
       frame.style.setProperty("--surface", "1");
-      frame.style.setProperty("--reveal", "1");
+      frame.style.setProperty("--copy-reveal", "1");
+      frame.style.setProperty("--cta-reveal", "1");
+      frame.style.setProperty("--copy-y", "0vh");
+      frame.style.setProperty("--cta-y", "0px");
     } else {
       update();
       window.addEventListener("scroll", schedule, { passive: true });
@@ -117,17 +125,18 @@ export function EntryStage() {
             const center = (WORD.length - 1) / 2;
             const side = index - center;
             const direction = side < 0 ? -1 : 1;
-            const closedX = side * 4.38;
-            const openX = side * 5.08 + direction * 7.6;
+            const distance = Math.abs(side);
+            const closedX = side * 6.05;
+            const openShift = direction * (8 - distance * 0.6);
             const style = {
               "--closed-x": `${closedX}vw`,
-              "--delta-x": `${openX - closedX}vw`,
+              "--open-shift": `${openShift}vw`,
               "--sy": HEIGHTS[index],
-              "--lift": `${((index % 4) - 1.5) * 0.75}vh`,
+              "--lift": `${((index % 4) - 1.5) * 0.9}vh`,
             } as CSSProperties;
             return (
-              <span className="letter" style={style} key={`${letter}-${index}`}>
-                {letter}
+              <span className="master-letter" style={style} key={`${letter}-${index}`}>
+                <LogoGlyph letter={letter} />
               </span>
             );
           })}
@@ -135,10 +144,10 @@ export function EntryStage() {
 
         <div className="mobile-wordmark" aria-hidden="true">
           <div className="mobile-row mobile-row-top">
-            {PORTTI.map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
+            {PORTTI.map((letter, index) => <LogoGlyph letter={letter} key={`${letter}-${index}`} />)}
           </div>
           <div className="mobile-row mobile-row-bottom">
-            {TEATTERI.map((letter, index) => <span key={`${letter}-${index}`}>{letter}</span>)}
+            {TEATTERI.map((letter, index) => <LogoGlyph letter={letter} key={`${letter}-${index}`} />)}
           </div>
         </div>
 
