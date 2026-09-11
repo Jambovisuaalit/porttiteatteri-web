@@ -1,4 +1,5 @@
 import { EntryStage, SiteHeader } from "@/components/entry-stage";
+import { StackedMasterLogo } from "@/components/master-logo";
 
 export default function Home() {
   return (
@@ -56,7 +57,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section id="mukaan" className="content-section section-signal">
+      <section id="mukaan" className="content-section section-dark section-join">
         <div className="section-shell">
           <div className="section-index">
             <span>03 / TULE MUKAAN</span>
@@ -69,14 +70,14 @@ export default function Home() {
             </div>
             <div className="section-copy">
               <p className="lead">Portti ei ole vain formaatti. Se on elämäntilanne, raja ja mahdollisuus ylittää se.</p>
-              <a className="black-link" href="mailto:info@porttiteatteri.fi">Ota yhteyttä</a>
+              <a className="signal-link" href="mailto:info@porttiteatteri.fi">Ota yhteyttä</a>
             </div>
           </div>
         </div>
       </section>
 
       <footer className="site-footer">
-        <span className="footer-mark">PORTTI / TEATTERI</span>
+        <span className="footer-master" aria-label="Porttiteatteri"><StackedMasterLogo /></span>
         <span>AVOIMET PORTIT</span>
         <span>HELSINKI / SUOMI</span>
       </footer>
