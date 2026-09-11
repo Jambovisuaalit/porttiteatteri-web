@@ -19,7 +19,16 @@ export function SiteHeader() {
     let frame = 0;
     const update = () => {
       frame = 0;
-      setVisible(window.scrollY > window.innerHeight * 1.08);
+      const stage = document.querySelector<HTMLElement>(".entry-stage");
+      if (!stage) {
+        setVisible(window.scrollY > window.innerHeight);
+        return;
+      }
+
+      const rect = stage.getBoundingClientRect();
+      const scrollable = Math.max(1, stage.offsetHeight - window.innerHeight);
+      const progress = clamp(-rect.top / scrollable);
+      setVisible(progress >= 0.88);
     };
     const schedule = () => {
       if (!frame) frame = requestAnimationFrame(update);
@@ -79,6 +88,7 @@ export function EntryStage() {
       frame.style.setProperty("--cta-reveal", ctaReveal.toFixed(4));
       frame.style.setProperty("--copy-y", `${((1 - copyReveal) * 12).toFixed(3)}vh`);
       frame.style.setProperty("--cta-y", `${((1 - ctaReveal) * 16).toFixed(2)}px`);
+      frame.dataset.ctaActive = ctaReveal >= 0.12 ? "true" : "false";
     };
 
     const schedule = () => {
@@ -94,6 +104,7 @@ export function EntryStage() {
       frame.style.setProperty("--cta-reveal", "1");
       frame.style.setProperty("--copy-y", "0vh");
       frame.style.setProperty("--cta-y", "0px");
+      frame.dataset.ctaActive = "true";
     } else {
       update();
       window.addEventListener("scroll", schedule, { passive: true });
@@ -113,7 +124,7 @@ export function EntryStage() {
 
   return (
     <section id="top" ref={stageRef} className="entry-stage" aria-label="Porttiteatteri — Avoimet portit">
-      <div ref={frameRef} className="entry-frame">
+      <div ref={frameRef} className="entry-frame" data-cta-active="false">
         <div className="stage-meta" aria-hidden="true">
           <span>PORTTITEATTERI</span>
           <span>YHTEISÖTEATTERI / HELSINKI</span>
